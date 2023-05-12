@@ -1,0 +1,57 @@
+name: deploy
+
+# Specific branch event trigger
+on:
+  push:
+    branches: 
+      - "main"
+
+# deploy job
+# sg name: wafflestay-github-deploy-sg
+# 1. AWS Connect -> 2. get ip -> 3. set ip on sg -> 4. deploy(run script) -> 5. unset ip on sg
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-20.04
+    env:
+      AWS_EC2_SG_ID: "sg-04eb949fdf2cb6e4e"
+      AWS_EC2_REGION: "ap-northeast-2"
+      AWS_EC2_HOST: 43.201.195.218
+      AWS_EC2_PORT: 22
+      AWS_EC2_USER: "ubuntu"
+      AWS_EC2_SSH_KEY: ${{ secrets.PUBLIC_SSH_KEY }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_DEPLOY_SCRIPT: sh /home/ubuntu/bin/temp-web/restart.sh
+    steps:
+      - name: 1. AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_EC2_REGION }}
+      - name: 2. get runner ip address
+        id: ip
+        uses: haythem/public-ip@v1.2
+      - name: 3. allow runner ip address to AWS EC2
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id $AWS_EC2_SG_ID \
+            --protocol tcp \
+            --port $AWS_EC2_PORT \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      - name: 4. run scripts in server(AWS EC2)
+        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+        with:
+          host: ${{ env.AWS_EC2_HOST }}
+          port: ${{ env.AWS_EC2_PORT }}
+          username: ${{ env.AWS_EC2_USER }}
+          key: ${{ env.AWS_EC2_SSH_KEY }}
+          script: ${{ env.AWS_DEPLOY_SCRIPT }}
+      - name: 5. revoke runner ip address
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_EC2_SG_ID \
+            --protocol tcp \
+            --port $AWS_EC2_PORT \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
