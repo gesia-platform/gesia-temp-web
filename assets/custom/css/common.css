@@ -1,0 +1,10 @@
+.input-border-default {
+    border: 1px solid #d1d3e2;
+}
+
+.content-short {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+    overflow: hidden;
+}

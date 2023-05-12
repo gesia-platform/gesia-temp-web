@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../common/head') %>
+    </head>
+
+    <body class="bg-gradient-dark">
+        <div class="container">
+            <!-- Outer Row -->
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-12 col-md-9">
+                    <div class="card o-hidden border-0 shadow-lg my-5">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg-6 d-none d-lg-block bg-register-image"></div>
+                                <div class="col-lg-6">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4 font-weight-bold"><%= locals.token_name %> WAFL 지갑/와플스테이 사용자 등록</h1>
+                                        </div>
+                                        <form class="user">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-user" id="lastName" placeholder="Last Name" />
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-user" id="firstName" placeholder="First Name" />
+                                            </div>
+                                            <div class="form-group input-group">
+                                                <input type="text" class="form-control form-control-user" id="phone" placeholder="Phone Number" />
+                                                <div class="input-group-append">
+                                                    <button class="btn form-control-user py-0 btn-outline-success input-border-default" type="button" id="phoneCheckButton">문자발송</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group input-group d-none" name="phoneConfirmCodeWrapper">
+                                                <input type="text" class="form-control form-control-user" id="phoneConfirmCode" placeholder="Phone Confirm Code" />
+                                                <div class="input-group-append">
+                                                    <button class="btn form-control-user py-0 btn-outline-success input-border-default" type="button" id="phoneConfirmButton">확인</button>
+                                                </div>
+                                            </div>
+                                           
+                                            <div class="form-group input-group">
+                                                <input type="email" class="form-control form-control-user" id="email" placeholder="Email Address" />
+                                                <!--<div class="input-group-append">
+                                                    <button class="btn form-control-user py-0 btn-outline-success input-border-default" type="button" id="emailCheckButton">Check</button>
+                                                </div>
+                                            -->
+                                            </div>
+                                            <!--
+                                            <div class="form-group input-group d-none" name="emailConfirmCodeWrapper">
+                                                <input type="text" class="form-control form-control-user" id="emailConfirmCode" placeholder="Email Confirm Code" />
+                                                <div class="input-group-append">
+                                                    <button class="btn form-control-user py-0 btn-outline-success input-border-default" type="button" id="emailConfirmButton">Confirm</button>
+                                                </div>
+                                            </div>
+                                            -->
+                                            <div class="form-group">
+                                                <input type="password" class="form-control form-control-user" id="password" placeholder="Password" />
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" class="form-control form-control-user" id="passwordConfirm" placeholder="Confirm Password" />
+                                            </div>
+                                            <a href="#notexist" class="btn btn-primary btn-user btn-block" id="registButton"> 회원가입 </a>
+                                            <a href="/account/login" class="btn btn-secondary btn-user btn-block"> 로그인으로 돌아가기 </a>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- script -->
+        <%- include('../common/script') %>
+        <script>
+            $(function () {
+                $('#emailCheckButton').on('click', function () {
+                    const email = $('#email').val();
+
+                    $('[name="emailConfirmCodeWrapper"]').removeClass('d-none');
+                    $('#emailCheckButton').removeClass('btn-outline-success');
+                    $('#emailCheckButton').removeClass('btn-success');
+
+                    $('[name="emailConfirmCodeWrapper"]').addClass('d-none');
+                    $('#emailCheckButton').addClass('btn-outline-success');
+
+                    $('#emailCheckButton').html('Check');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/account/email/check',
+                        data: { email: email },
+                        success: function (response) {
+                            if (response.code !== 0) {
+                                alert(response.message);
+                                return false;
+                            }
+
+                            alert(response.data.message);
+
+                            $('[name="emailConfirmCodeWrapper"]').removeClass('d-none');
+                            $('#emailCheckButton').removeClass('btn-outline-success');
+                            $('#emailCheckButton').addClass('btn-success');
+                            $('#emailCheckButton').html('wait for...');
+                        },
+                        error: function (error) {
+                            const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                            const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                            alert(`[CODE - ${errorCode}]\n${message}`);
+                        },
+                    });
+                });
+                /*
+
+                $('#emailConfirmButton').on('click', function () {
+                    const email = $('#email').val();
+                    const code = $('#emailConfirmCode').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/account/email/confirm',
+                        data: { email: email, code: code },
+                        success: function (response) {
+                            if (response.code !== 0) {
+                                alert(response.message);
+                                return false;
+                            }
+
+                            alert(response.data.message);
+
+                            $('[name="emailConfirmCodeWrapper"]').removeClass('d-none');
+                            $('[name="emailConfirmCodeWrapper"]').addClass('d-none');
+
+                            $('#emailCheckButton').removeClass('btn-outline-success');
+                            $('#emailCheckButton').removeClass('btn-success');
+                            $('#emailCheckButton').addClass('btn-success');
+
+                            $('#emailCheckButton').html('Confirmed');
+                            $('#emailCheckButton').attr('disabled', true);
+                            $('#email').attr('disabled', true);
+                        },
+                        error: function (error) {
+                            const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                            const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                            alert(`[CODE - ${errorCode}]\n${message}`);
+                        },
+                    });
+                });
+                */
+
+                $('#phoneCheckButton').on('click', function () {
+                    const phone = $('#phone').val();
+
+                    $('[name="phoneConfirmCodeWrapper"]').removeClass('d-none');
+                    $('#phoneCheckButton').removeClass('btn-outline-success');
+                    $('#phoneCheckButton').removeClass('btn-success');
+
+                    $('[name="phoneConfirmCodeWrapper"]').addClass('d-none');
+                    $('#phoneCheckButton').addClass('btn-outline-success');
+
+                    $('#phoneCheckButton').html('Check');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/account/phone/check',
+                        data: { phone: phone },
+                        success: function (response) {
+                            if (response.code !== 0) {
+                                alert(response.message);
+                                return false;
+                            }
+
+                            alert(response.data.message);
+
+                            $('[name="phoneConfirmCodeWrapper"]').removeClass('d-none');
+                            $('#phoneCheckButton').removeClass('btn-outline-success');
+                            $('#phoneCheckButton').addClass('btn-success');
+                            $('#phoneCheckButton').html('wait for...');
+                        },
+                        error: function (error) {
+                            const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                            const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                            alert(`[CODE - ${errorCode}]\n${message}`);
+                        },
+                    });
+                });
+
+                $('#phoneConfirmButton').on('click', function () {
+                    const phone = $('#phone').val();
+                    const code = $('#phoneConfirmCode').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/account/phone/confirm',
+                        data: { phone: phone, code: code },
+                        success: function (response) {
+                            if (response.code !== 0) {
+                                alert(response.message);
+                                return false;
+                            }
+
+                            alert(response.data.message);
+
+                            $('[name="phoneConfirmCodeWrapper"]').removeClass('d-none');
+                            $('[name="phoneConfirmCodeWrapper"]').addClass('d-none');
+
+                            $('#phoneCheckButton').removeClass('btn-outline-success');
+                            $('#phoneCheckButton').removeClass('btn-success');
+                            $('#phoneCheckButton').addClass('btn-success');
+
+                            $('#phoneCheckButton').html('Confirmed');
+                            $('#phoneCheckButton').attr('disabled', true);
+                            $('#phone').attr('disabled', true);
+                        },
+                        error: function (error) {
+                            const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                            const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                            alert(`[CODE - ${errorCode}]\n${message}`);
+                        },
+                    });
+                });
+
+                $('#registButton').on('click', async function (e) {
+                    const lastName = $('#lastName').val();
+                    const firstName = $('#firstName').val();
+                    const phone = $('#phone').val();
+                    const email = $('#email').val();
+                    const password = $('#password').val();
+                    const passwordConfirm = $('#passwordConfirm').val();
+
+                    if (password !== passwordConfirm) {
+                        alert('비밀번호가 일치하지 않습니다');
+                        return;
+                    }
+
+                    const data = { last_name: lastName, first_name: firstName, phone: phone, email: email, password: password };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/account/regist',
+                        data: data,
+                        success: function (response) {
+                            //alert(JSON.stringify(response.data));
+                            alert(response.data.message);                            
+                            //alert(response.data.code);
+                            if(response.data.code == 1002){
+                                window.location.replace('/account/regist');
+                            }else{
+                                window.location.replace(response.data.redirect);
+                            }
+                        },
+                        error: function (error) {
+                            const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                            const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                            alert(`[CODE - ${errorCode}]\n${message}`);
+                            
+                        },
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

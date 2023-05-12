@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../common/head') %>
+    </head>
+
+    <body id="page-top">
+        <div id="wrapper">
+            <%- include('../common/side') %>
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <%- include('../common/top') %>
+
+                    <div class="container-fluid">
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                            <h1 class="h3 mb-0 text-gray-800">WAFL 지갑</h1>
+                        </div>
+
+                        <!-- Content Row -->
+                        <div class="row">
+                            <div class="col-xl-12 col-md-12 mb-4 w-100 d-none" name="createWalletWrapper">
+                                <a href="#notexist" class="btn btn-primary btn-icon-split w-100" name="createWalletButton">
+                                    <span class="icon text-white-50"><i class="fas fa-arrow-right"></i></span>
+                                    <span class="text w-100">지갑생성</span>
+                                </a>
+                            </div>
+
+                            <div class="col-xl-12 col-md-12 mb-4 float-style">
+                                <div class="card border-left-count shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-count text-uppercase mb-1">현재 평가금액</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalbalanceText">₩ 0</div>
+                                                <div class="h5 mb-0 text-gray-800" id="marketPriceText">(개당 : ₩ 0)</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="../../assets/img/icon-won.svg" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-12 mb-4 float-style">
+                                <div class="card border-left-count shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-count text-uppercase mb-1">매수 금액</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="buy_totalText">₩ 0</div>
+                                                <div class="h5 mb-0 text-gray-800">(개당 : ₩ 3,000)</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <img src="../../assets/img/icon-won.svg" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-12 mb-4 float-style">
+                                <div class="card border-left-count shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-count text-uppercase mb-1">와플수량</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="topbalanceText">0 WAFL</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 col-md-12 mb-4 float-style">
+                                <div class="card border-left-count shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-count text-uppercase mb-1">수익률</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="earning_rate">0 %</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <!--<i class="fas fa-dollar-sign fa-2x text-gray-300"></i>-->
+                                                <img src="../../assets/img/icon-percent.svg" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 col-md-12 mb-4" name="walletAddressWrapper">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Address</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id=""><%= locals.session_account ? locals.session_account.wallet_address : '' %></div>
+                                                <input type="hidden" class="btn btn-primary" id="wallet_address_text" value="" />
+                                                <button type="button" class="btn btn-primary" onclick="copy_to_clipboard();">복사</button>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-12 mb-4" name="walletEthBalanceWrapper">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">이더리움 잔액</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="ethBalanceText">-ETH</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <!--<i class="fas fa-brands fa-ethereum fa-2x text-gray-300"></i>-->
+                                                <img src="../../assets/img/icon-ethereum.svg" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-12 mb-4" name="walletBalanceWrapper">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1"><%= locals.token_name %> 잔액</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="balanceText">- <%= locals.token_name %></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.container-fluid -->
+                </div>
+                <!-- End of Main Content -->
+
+                <%- include('../common/footer') %>
+            </div>
+            <!-- End of Content Wrapper -->
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <%- include('../common/scroll') %>
+
+        <!-- logout modal -->
+        <%- include('../common/logout-modal') %>
+
+        <!-- script -->
+        <%- include('../common/script') %>
+        <script>
+            $(function () {
+                const walletAddress = "<%= locals.session_account ? locals.session_account.wallet_address : '' %>";
+                //const mode = document.getElementById("wallet_address_text");
+                document.getElementById('wallet_address_text').value = walletAddress;
+                //alert(document.getElementById("wallet_address_text").value);
+                if (!walletAddress || walletAddress === '') {
+                    $('[name="createWalletWrapper"]').removeClass('d-none');
+                    $('[name="walletAddressWrapper"]').removeClass('d-none');
+                    $('[name="walletBalanceWrapper"]').removeClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').removeClass('d-none');
+
+                    $('[name="walletAddressWrapper"]').addClass('d-none');
+                    $('[name="walletBalanceWrapper"]').addClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').addClass('d-none');
+                }
+
+                if (walletAddress && walletAddress !== '') {
+                    $('[name="createWalletWrapper"]').removeClass('d-none');
+                    $('[name="walletAddressWrapper"]').removeClass('d-none');
+                    $('[name="walletBalanceWrapper"]').removeClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').removeClass('d-none');
+
+                    $('[name="createWalletWrapper"]').addClass('d-none');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/wallet/ethbalance',
+                        data: { address: walletAddress },
+                        success: function (response) {
+                            $('#ethBalanceText').html(response.data.wallet_balance + ' ETH');
+                        },
+                    });
+
+                    /**
+                     * 현재 수량
+                     * */
+                    $.ajax({
+                        type: 'GET',
+                        url: '/wallet/balance',
+                        data: { address: walletAddress },
+                        success: function (response) {
+                            $('#balanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>');
+                            //$('#balanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>'+'CONTRACT_ADDRESS:'+response.data.CONTRACT_ADDRESS);
+                            $('#topbalanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>');
+                            var wallet_balance = response.data.raw_balance;
+
+                            var buy_totalText = Number(wallet_balance) * 3000;
+                            buy_totalText = Number(buy_totalText).toLocaleString('ko-KR');
+                            $('#buy_totalText').html('₩' + buy_totalText);
+
+                            /**
+                             * 현재시세조회
+                             * */
+                            $.ajax({
+                                type: 'GET',
+                                url: '/wallet/marketprice',
+                                success: function (response) {
+                                    var unit_price = Math.floor(Number(response.data.raw_price)).toLocaleString('ko-KR');
+
+                                    $('#marketPriceText').html('(개당 : ₩' + unit_price + ')');
+                                    $('#earning_rate').html(Number(response.data.earning_rate) + '%');
+                                    var totalbalanceText = wallet_balance * response.data.raw_price;
+                                    totalbalanceText = Math.floor(Number(totalbalanceText)).toLocaleString('ko-KR');
+                                    $('#totalbalanceText').html('₩' + totalbalanceText);
+                                },
+                            });
+                        },
+                    });
+                }
+            });
+
+            $(document).on('click', '[name="createWalletButton"]', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/wallet/create',
+                    success: function (response) {
+                        alert(response.data.message);
+
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                        const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                        alert(`[CODE - ${errorCode}]\n${message}`);
+                    },
+                });
+            });
+            function copy_to_clipboard() {
+                var urlbox = document.getElementById('wallet_address_text');
+                copyStringToClipboard(urlbox.value);
+                //urlbox.select();
+                //document.execCommand( 'Copy' );
+                alert('주소가 복사 되었습니다.');
+            }
+            function copyStringToClipboard(string) {
+                function handler(event) {
+                    event.clipboardData.setData('text/plain', string);
+                    event.preventDefault();
+                    document.removeEventListener('copy', handler, true);
+                }
+
+                document.addEventListener('copy', handler, true);
+                document.execCommand('copy');
+            }
+        </script>
+    </body>
+</html>

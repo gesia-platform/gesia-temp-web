@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('../common/head') %>
+    </head>
+
+    <body id="page-top">
+        <div id="wrapper">
+            <%- include('../common/side') %>
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <%- include('../common/top') %>
+
+                    <div class="container-fluid">
+                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                            <h1 class="h3 mb-0 text-gray-800">인증서 리스트</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4 float-style">
+                                <div class="row">
+                                    <div class="col-2 pr-1">
+                                        <select class="btn btn-light border border-dark w-100">
+                                            <option selected>타입</option>
+                                            <option value="cert_name">인증서 이름</option>
+                                            <option value="cert_type">인증서 타입</option>
+                                            <option value="carbon_type">탄소 타입</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-8 px-1">
+                                        <input class="btn btn-light border border-dark w-100" placeholder="검색어 입력" />
+                                    </div>
+                                    <div class="col-2 pl-1">
+                                        <button class="btn btn-light border border-dark w-100">검색</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-4 float-style">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-success">산림청 탄소상쇄 인증서</h6>
+                                    </div>
+                                    <div class="card-body">The styling for this basic card example is created by using default Bootstrap utility classes. By using utility classes, the style of the card component can be easily modified with no need for any custom CSS!</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%- include('../common/footer') %>
+            </div>
+        </div>
+        <%- include('../common/scroll') %> <%- include('../common/logout-modal') %> <%- include('../common/script') %>
+        <script>
+            $(function () {
+                const walletAddress = "<%= locals.session_account ? locals.session_account.wallet_address : '' %>";
+                //const mode = document.getElementById("wallet_address_text");
+                document.getElementById('wallet_address_text').value = walletAddress;
+                //alert(document.getElementById("wallet_address_text").value);
+                if (!walletAddress || walletAddress === '') {
+                    $('[name="createWalletWrapper"]').removeClass('d-none');
+                    $('[name="walletAddressWrapper"]').removeClass('d-none');
+                    $('[name="walletBalanceWrapper"]').removeClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').removeClass('d-none');
+
+                    $('[name="walletAddressWrapper"]').addClass('d-none');
+                    $('[name="walletBalanceWrapper"]').addClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').addClass('d-none');
+                }
+
+                if (walletAddress && walletAddress !== '') {
+                    $('[name="createWalletWrapper"]').removeClass('d-none');
+                    $('[name="walletAddressWrapper"]').removeClass('d-none');
+                    $('[name="walletBalanceWrapper"]').removeClass('d-none');
+                    $('[name="walletEthBalanceWrapper"]').removeClass('d-none');
+
+                    $('[name="createWalletWrapper"]').addClass('d-none');
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '/wallet/ethbalance',
+                        data: { address: walletAddress },
+                        success: function (response) {
+                            $('#ethBalanceText').html(response.data.wallet_balance + ' ETH');
+                        },
+                    });
+
+                    /**
+                     * 현재 수량
+                     * */
+                    $.ajax({
+                        type: 'GET',
+                        url: '/wallet/balance',
+                        data: { address: walletAddress },
+                        success: function (response) {
+                            $('#balanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>');
+                            //$('#balanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>'+'CONTRACT_ADDRESS:'+response.data.CONTRACT_ADDRESS);
+                            $('#topbalanceText').html(response.data.wallet_balance + ' <%= locals.token_name %>');
+                            var wallet_balance = response.data.raw_balance;
+
+                            var buy_totalText = Number(wallet_balance) * 3000;
+                            buy_totalText = Number(buy_totalText).toLocaleString('ko-KR');
+                            $('#buy_totalText').html('₩' + buy_totalText);
+
+                            /**
+                             * 현재시세조회
+                             * */
+                            $.ajax({
+                                type: 'GET',
+                                url: '/wallet/marketprice',
+                                success: function (response) {
+                                    var unit_price = Math.floor(Number(response.data.raw_price)).toLocaleString('ko-KR');
+
+                                    $('#marketPriceText').html('(개당 : ₩' + unit_price + ')');
+                                    $('#earning_rate').html(Number(response.data.earning_rate) + '%');
+                                    var totalbalanceText = wallet_balance * response.data.raw_price;
+                                    totalbalanceText = Math.floor(Number(totalbalanceText)).toLocaleString('ko-KR');
+                                    $('#totalbalanceText').html('₩' + totalbalanceText);
+                                },
+                            });
+                        },
+                    });
+                }
+            });
+
+            $(document).on('click', '[name="createWalletButton"]', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/wallet/create',
+                    success: function (response) {
+                        alert(response.data.message);
+
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        const errorCode = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.code : error.responseJSON.code ? error.responseJSON.code : 'UNKNOWN';
+                        const message = error.responseJSON.data && error.responseJSON.data.code ? error.responseJSON.data.message : error.responseJSON.message ? error.responseJSON.message : 'ERROR';
+                        alert(`[CODE - ${errorCode}]\n${message}`);
+                    },
+                });
+            });
+            function copy_to_clipboard() {
+                var urlbox = document.getElementById('wallet_address_text');
+                copyStringToClipboard(urlbox.value);
+                //urlbox.select();
+                //document.execCommand( 'Copy' );
+                alert('주소가 복사 되었습니다.');
+            }
+            function copyStringToClipboard(string) {
+                function handler(event) {
+                    event.clipboardData.setData('text/plain', string);
+                    event.preventDefault();
+                    document.removeEventListener('copy', handler, true);
+                }
+
+                document.addEventListener('copy', handler, true);
+                document.execCommand('copy');
+            }
+        </script>
+    </body>
+</html>
