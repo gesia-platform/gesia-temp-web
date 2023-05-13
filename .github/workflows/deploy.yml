@@ -19,7 +19,7 @@ jobs:
       AWS_EC2_HOST: 43.201.195.218
       AWS_EC2_PORT: 22
       AWS_EC2_USER: "ubuntu"
-      AWS_EC2_SSH_KEY: ${{ secrets.PUBLIC_SSH_KEY }}
+      AWS_EC2_SSH_KEY: ${{ secrets.AAAA }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       AWS_DEPLOY_SCRIPT: sh /home/ubuntu/bin/temp-web/restart.sh
@@ -41,7 +41,9 @@ jobs:
             --port $AWS_EC2_PORT \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - name: 4. run scripts in server(AWS EC2)
-        uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+        id: run-script
+        if: ${{ success() || (steps.ip.outcome == 'failure' && steps.ip.exit-code == 254) }}
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ env.AWS_EC2_HOST }}
           port: ${{ env.AWS_EC2_PORT }}
@@ -49,6 +51,7 @@ jobs:
           key: ${{ env.AWS_EC2_SSH_KEY }}
           script: ${{ env.AWS_DEPLOY_SCRIPT }}
       - name: 5. revoke runner ip address
+        if: ${{ success() || steps.run-script.outcome == 'failure' }}
         run: |
           aws ec2 revoke-security-group-ingress \
             --group-id $AWS_EC2_SG_ID \
