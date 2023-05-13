@@ -100,7 +100,7 @@
                                     <div class="card-tail">
                                         <div class="row">
                                             <div class="col-12">
-                                                <button class="btn btn-primary w-100">상세보기</button>
+                                                <button class="btn btn-primary w-100" name="certDetailBtn" data-id="1">상세보기</button>
                                             </div>
                                         </div>
                                     </div>
@@ -113,5 +113,12 @@
             </div>
         </div>
         <%- include('../common/scroll') %> <%- include('../common/logout-modal') %> <%- include('../common/script') %>
+        <script>
+            $(function() {
+                $('button[name="certDetailBtn"]').on('click', function() {
+                    location.href = '/providers/' + $(this).data('id');
+                });
+            });
+        </script>
     </body>
 </html>
