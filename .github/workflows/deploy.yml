@@ -41,6 +41,7 @@ jobs:
             --port $AWS_EC2_PORT \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - name: 4. run scripts in server(AWS EC2)
+        continue-on-error: true
         uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
         with:
           host: ${{ env.AWS_EC2_HOST }}
