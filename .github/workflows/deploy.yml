@@ -41,7 +41,8 @@ jobs:
             --port $AWS_EC2_PORT \
             --cidr ${{ steps.ip.outputs.ipv4 }}/32
       - name: 4. run scripts in server(AWS EC2)
-        if: ${{ failure() }}
+        id: run-script
+        if: ${{ success() || (steps.ip.outcome == 'failure' && steps.ip.exit-code == 254) }}
         uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
         with:
           host: ${{ env.AWS_EC2_HOST }}
@@ -50,7 +51,7 @@ jobs:
           key: ${{ env.AWS_EC2_SSH_KEY }}
           script: ${{ env.AWS_DEPLOY_SCRIPT }}
       - name: 5. revoke runner ip address
-        if: ${{ failure() }}
+        if: ${{ success() || steps.run-script.outcome == 'failure' }}
         run: |
           aws ec2 revoke-security-group-ingress \
             --group-id $AWS_EC2_SG_ID \
