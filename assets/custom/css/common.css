@@ -8,3 +8,9 @@
     word-wrap: normal;
     overflow: hidden;
 }
+
+.table-x-scroll > table > thead,
+.table-x-scroll > table > tbody {
+    overflow-x: auto;
+    white-space: nowrap;
+}

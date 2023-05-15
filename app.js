@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'development') dotenv.config({ path: './config/env/
 if (process.env.NODE_ENV === 'testing') dotenv.config({ path: './config/env/.env.test' });
 
 // * mysql config
-global.dbPool = mysql2.createPool(require('./config/db/mariadb')).promise();
+// global.dbPool = mysql2.createPool(require('./config/db/mariadb')).promise();
 
 // * view engine setup
 app.set('views', path.join(__dirname, 'views'));

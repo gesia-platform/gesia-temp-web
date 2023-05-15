@@ -18,6 +18,11 @@
     $('.collapse-item').each(function () {
         const me = $(this);
 
+        var m = matchMedia('screen and (min-width: 960px)');
+
+        console.log(m.media);
+        console.log(m.matches);
+
         if (me.data('type') === (submenu ? submenu : '')) me.addClass('active');
         else me.removeClass('active');
     });
