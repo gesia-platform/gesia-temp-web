@@ -35,7 +35,7 @@
                                             <div class="col-lg-2 col-6"><p class="content-short">인증서 타입:</p></div>
                                             <div class="col-lg-4 col-6 d-flex justify-content-between">
                                                 <p class="content-short">PAPER</p>
-                                                <span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success content-short"><i class="fas fa-download fa-sm text-success-50"></i> Download</a></span>
+                                                <span><a href="/assets/custom/pdf/test_pdf_1.pdf" class="d-sm-inline-block btn btn-sm btn-outline-success content-short" target="_blank"><i class="fas fa-download fa-sm text-success-50"></i> Download</a></span>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -106,32 +106,32 @@
                             <div class="col-lg-4 col-12 mb-4 float-style">
                                 <div class="card shadow mb-4">
                                     <div class="card-header p-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">보유 NFV</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary content-short">보유 NFV</h6>
                                     </div>
                                     <div class="card-body pb-0">
                                         <div class="row">
-                                            <div class="col-4"><p>이름:</p></div>
-                                            <div class="col-8"><p>AAA</p></div>
+                                            <div class="col-4"><p class="content-short">이름:</p></div>
+                                            <div class="col-8"><p class="content-short">AAA</p></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4"><p>탄소량:</p></div>
-                                            <div class="col-8"><p>1,200KG</p></div>
+                                            <div class="col-4"><p class="content-short">탄소량:</p></div>
+                                            <div class="col-8"><p class="content-short">1,200KG</p></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4"><p>금액:</p></div>
-                                            <div class="col-8"><p></p></div>
+                                            <div class="col-4"><p class="content-short">금액:</p></div>
+                                            <div class="col-8"><p class="content-short"></p></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4"><p>수량:</p></div>
-                                            <div class="col-8"><p>1,200</p></div>
+                                            <div class="col-4"><p class="content-short">수량:</p></div>
+                                            <div class="col-8"><p class="content-short">1,200</p></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4"><p>Contract:</p></div>
-                                            <div class="col-8"><p>0xsaff1SA12S8...</p></div>
+                                            <div class="col-4"><p class="content-short">Contract:</p></div>
+                                            <div class="col-8"><p class="content-short">0xsaff1SA12S8...</p></div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4"><p>이미지:</p></div>
-                                            <div class="col-8"><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></div>
+                                            <div class="col-4"><p class="content-short">이미지:</p></div>
+                                            <div class="col-8"><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success" name="imageModalBtn" data-src="/assets/custom/img/test_image_1.jpg"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -167,9 +167,9 @@
                                                                 <td></td>
                                                                 <td>1,200</td>
                                                                 <td>0xF23Fsf93...</td>
-                                                                <td><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></td>
+                                                                <td><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success" name="imageModalBtn" data-src="/assets/custom/img/test_image_1.jpg"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></td>
                                                                 <td>23.05.15</td>
-                                                                <td><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></td>
+                                                                <td><span><a href="#" class="d-sm-inline-block btn btn-sm btn-outline-success" name="imageModalBtn" data-src="/assets/custom/img/test_image_1.jpg"><i class="fas fa-image fa-sm text-success-50"></i> 보기</a></span></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -185,6 +185,6 @@
                 <%- include('../common/footer') %>
             </div>
         </div>
-        <%- include('../common/scroll') %> <%- include('../common/logout-modal') %> <%- include('../common/script') %>
+        <%- include('../common/scroll') %> <%- include('../common/modal-logout') %> <%- include('../common/modal-image') %> <%- include('../common/script') %>
     </body>
 </html>

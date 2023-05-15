@@ -17,5 +17,5 @@ function doRequest(url) {
     });
 }
 
-exports.getProviderList = async (req, res, next) => res.render('provider/list', { submenu: 'cert_list' });
-exports.getProviderDetail = async (req, res, next) => res.render('provider/detail', { submenu: 'cert_detail' });
+exports.getProviderList = async (req, res, next) => res.render('provider/list', { topmenu: 'cert', submenu: 'cert_list' });
+exports.getProviderDetail = async (req, res, next) => res.render('provider/detail', { topmenu: 'cert', submenu: 'cert_detail' });
