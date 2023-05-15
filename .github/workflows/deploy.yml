@@ -19,7 +19,7 @@ jobs:
       AWS_EC2_HOST: 43.201.195.218
       AWS_EC2_PORT: 22
       AWS_EC2_USER: "ubuntu"
-      AWS_EC2_SSH_KEY: ${{ secrets.AAAA }}
+      AWS_EC2_SSH_KEY: ${{ secrets.PUBLIC_SUBNET_SSH_KEY }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       AWS_DEPLOY_SCRIPT: sh /home/ubuntu/bin/temp-web/restart.sh
