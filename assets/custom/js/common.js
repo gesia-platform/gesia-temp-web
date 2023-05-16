@@ -26,6 +26,25 @@
         $('#imageModal').modal('show');
     });
 
+    let scrollPosition;
+
+    $('#imageModal').on('show.bs.modal', function () {
+        scrollPosition = window.pageYOffset;
+        $('body').css('position', 'fixed');
+        $('body').css('top', '-' + scrollPosition + 'px');
+    });
+
+    $('#imageModal').on('hidden.bs.modal', function () {
+        $('body').css('position', '');
+        $('body').css('top', '');
+        window.scrollTo(0, scrollPosition);
+    });
+
+    function preventScroll(e) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+    }
+
     $('li[name="topmenu"]').each(function () {
         const me = $(this);
         const media = matchMedia('screen and (min-width: 960px)');
