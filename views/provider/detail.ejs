@@ -180,5 +180,19 @@
             </div>
         </div>
         <%- include('../common/scroll') %> <%- include('../common/modal-logout') %> <%- include('../common/modal-image') %> <%- include('../common/script') %>
+
+        <script>
+            $(document).on('click', '#walletBtn', async function() {
+                let web3, account;
+
+                if (window.ethereum) web3 = new Web3(window.ethereum);
+                else if (typeof window.web3 !== 'undefined') web3 = new Web3(window.web3.currentProvider);
+                else alert('메타마스크가 설치되어 있지 않습니다');
+
+                if (web3) account = await web3.eth.requestAccounts();
+
+                if (account) $('#walletWrapper').html(`<p class="nav-link dropdown-toggle content-short mb-0">${account}</p>`);
+            });
+        </script>
     </body>
 </html>
